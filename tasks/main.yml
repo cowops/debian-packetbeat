@@ -5,15 +5,19 @@
   ignore_errors: True
 
 - name: install required packages
-  apt: pkg={{ item }} state=latest
-  with_items:
-    - libpcap0.8
+  apt:
+    name: {{ packages }}
+    state: latest
+  vars:
+    packages:
+      - libpcap0.8
 
 - name: download packetbeat archive
   get_url: url={{ packetbeat.url }} dest=/tmp/packetbeat.deb
   when: not packetbeat_binary.stat.exists
 
 - name: install packetbeat packages
-  apt: deb=/tmp/packetbeat.deb
+  apt:
+    deb: /tmp/packetbeat.deb
   when: not packetbeat_binary.stat.exists
   notify: start packetbeat
